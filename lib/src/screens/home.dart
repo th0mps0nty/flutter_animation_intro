@@ -21,7 +21,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     catAnimation = Tween(begin: 0.0, end: 100.0).animate(
       CurvedAnimation(parent: catController, curve: Curves.easeIn),
     );
-    catController.forward();
+  }
+
+  onTap() {
+    if (catController.status == AnimationStatus.completed) {
+      catController.reverse();
+    } else if (catController.status == AnimationStatus.dismissed) {
+      catController.forward();
+    }
   }
 
   @override
@@ -30,20 +37,38 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text('Animation!'),
       ),
-      body: buildAnimation(),
+      body: GestureDetector(
+        child: Center(
+          child: Stack(
+            children: [
+              buildBox(),
+              buildCatAnimation(),
+            ],
+          ),
+        ),
+        onTap: onTap,
+      ),
     );
   }
 
-  Widget buildAnimation() {
+  Widget buildCatAnimation() {
     return AnimatedBuilder(
       animation: catAnimation,
       builder: (context, child) {
-        return Container(
+        return Positioned(
           child: child,
-          margin: EdgeInsets.only(top: catAnimation.value),
+          bottom: catAnimation.value,
         );
       },
       child: Cat(),
+    );
+  }
+
+  Widget buildBox() {
+    return Container(
+      height: 200,
+      width: 200,
+      color: Colors.brown.shade300,
     );
   }
 }
